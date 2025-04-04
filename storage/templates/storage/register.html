@@ -1,0 +1,153 @@
+{% extends 'base.html' %}
+
+{% block title %}Sign Up - Django Cloud Storage{% endblock %}
+
+{% block content %}
+<div class="container d-flex justify-content-center align-items-center min-vh-100">
+    <div class="card shadow-lg p-4 rounded-4" style="max-width: 440px; width: 100%; background: #ffffff;">
+        <h2 class="text-center text-primary fw-bold mb-2">🚀 Create Your Cloud Account</h2>
+        <p class="text-center text-muted mb-4">Get started with secure file management today.</p>
+
+        <form method="post" class="needs-validation w-100" novalidate>
+            {% csrf_token %}
+
+            <div class="form-floating mb-3">
+                <input type="text" name="username" id="id_username" class="form-control" placeholder="Username" required>
+                <label for="id_username">Username</label>
+            </div>
+
+            <div class="form-floating mb-3">
+                <input type="email" name="email" id="id_email" class="form-control" placeholder="Email" required>
+                <label for="id_email">Email</label>
+            </div>
+
+            <div class="form-floating mb-3 position-relative">
+                <input type="password" name="password1" id="id_password1" class="form-control" placeholder="Password" required>
+                <label for="id_password1">Password</label>
+                <span class="position-absolute top-50 end-0 translate-middle-y me-3 cursor-pointer" id="togglePassword" aria-label="Toggle password visibility">
+                    <i class="fas fa-eye"></i>
+                </span>
+                <div class="mt-1 small text-muted" id="strengthText"></div>
+            </div>
+
+            <div class="form-floating mb-3 position-relative">
+                <input type="password" name="password2" id="id_password2" class="form-control" placeholder="Confirm Password" required>
+                <label for="id_password2">Confirm Password</label>
+                <span class="position-absolute top-50 end-0 translate-middle-y me-3 cursor-pointer" id="togglePassword2" aria-label="Toggle confirm password visibility">
+                    <i class="fas fa-eye"></i>
+                </span>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100 shadow-sm py-2">Sign Up</button>
+        </form>
+
+        <p class="text-center mt-3">
+            Already have an account?
+            <a href="{% url 'login' %}" class="text-decoration-none text-primary fw-bold">Log in</a>
+        </p>
+    </div>
+</div>
+
+<!-- Font Awesome for Eye Icon -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+<style>
+    body {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+    }
+
+    .card {
+        animation: fadeIn 0.8s ease-in-out;
+    }
+
+    .form-floating input {
+        border-radius: 10px;
+        padding: 10px;
+        width: 100%;
+    }
+
+    .form-floating label {
+        padding-left: 10px;
+    }
+
+    .form-floating input:focus {
+        border: 2px solid #667eea;
+        box-shadow: 0px 0px 5px #667eea;
+    }
+
+    .cursor-pointer {
+        cursor: pointer;
+    }
+
+    #togglePassword, #togglePassword2 {
+        padding: 6px;
+        border-radius: 6px;
+        transition: background 0.2s;
+    }
+
+    #togglePassword:hover, #togglePassword2:hover {
+        background: rgba(0, 0, 0, 0.05);
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+
+<script>
+    // Toggle password visibility
+    function toggleVisibility(toggleId, inputId) {
+        const toggle = document.getElementById(toggleId);
+        const input = document.getElementById(inputId);
+
+        toggle.addEventListener('click', () => {
+            const icon = toggle.querySelector("i");
+            if (input.type === "password") {
+                input.type = "text";
+                icon.classList.replace("fa-eye", "fa-eye-slash");
+            } else {
+                input.type = "password";
+                icon.classList.replace("fa-eye-slash", "fa-eye");
+            }
+        });
+    }
+
+    toggleVisibility("togglePassword", "id_password1");
+    toggleVisibility("togglePassword2", "id_password2");
+
+    // Password strength checker
+    document.getElementById("id_password1").addEventListener("input", function () {
+        const strengthText = document.getElementById("strengthText");
+        const value = this.value;
+        let strength = "";
+
+        if (value.length === 0) {
+            strength = "";
+        } else if (value.length < 6) {
+            strength = "Weak 🔴";
+        } else if (/[A-Z]/.test(value) && /[0-9]/.test(value) && /[\W_]/.test(value)) {
+            strength = "Strong 🟢";
+        } else {
+            strength = "Moderate 🟡";
+        }
+
+        strengthText.textContent = strength;
+    });
+
+    {% if messages %}
+    {% for message in messages %}
+        <div class="alert {% if message.tags == 'success' %}alert-success{% else %}alert-danger{% endif %} text-center">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endif %}
+
+</script>
+{% endblock %}
